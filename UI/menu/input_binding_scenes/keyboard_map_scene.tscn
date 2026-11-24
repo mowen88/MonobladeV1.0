@@ -1,0 +1,503 @@
+[gd_scene format=3 uid="uid://mwwxhcmjthyv"]
+
+[ext_resource type="AudioStream" uid="uid://citx3e07qf0e3" path="res://UI/menu/audio/short_button_sound.wav" id="1_r20u5"]
+[ext_resource type="Theme" uid="uid://bibbrrx3ud3nw" path="res://UI/ui_theme.tres" id="2_12lqh"]
+
+[sub_resource type="GDScript" id="GDScript_yg5kw"]
+script/source = "extends CanvasLayer
+
+signal back_requested
+
+@export var reset_sound: AudioStream
+
+@onready var control: Control = $Control
+@onready var column_1: VBoxContainer = $Control/KeyboardMenu/HBoxContainer/Column1
+@onready var column_2: VBoxContainer = $Control/KeyboardMenu/HBoxContainer/Column2
+@onready var back_button: Button = $Control/KeyboardMenu/BackButton
+@onready var reset_defaults_button: Button = $Control/KeyboardMenu/ResetDefaultsButton
+@onready var tooltip_label: Label = $Control/ColorRect/TooltipLabel
+
+# Track remapping state
+var remapping_button: Button = null
+var remapping_action: String = \"\"
+
+# Override key names to fit the UI width
+const KEY_LABEL_OVERRIDES := {
+	\"Left Mouse Button\": \"LMB\",
+	\"Right Mouse Button\": \"RMB\",
+	\"Mouse Wheel Up\": \"MW Up\",
+	\"Mouse Wheel Down\": \"MW Down\",
+	\"Wheel Up\": \"MW Up\",
+	\"Wheel Down\": \"MW Down\",
+	\"Middle Mouse Button\": \"MMB\",
+	\"Mouse Button 4\": \"MB4\",
+	\"Mouse Button 5\": \"MB5\",
+	\"Escape\": \"Esc\",
+	\"Delete\": \"Del\",
+	\"Caps Lock\": \"Caps\",
+	\"Num Lock\": \"NumLock\",
+	\"Scroll Lock\": \"ScrollLock\",
+	\"Print Screen\": \"PrtSc\",
+	\"Kp Enter\": \"NumEnter\",
+	\"Kp Multiply\": \"Num*\",
+	\"Kp Add\": \"Num+\",
+	\"Kp Subtract\": \"Num-\",
+	\"Kp Divide\": \"Num/\",
+}
+
+func _format_input_event_label(ev: InputEvent) -> String:
+	if ev is InputEventMouseButton:
+		match ev.button_index:
+			MOUSE_BUTTON_LEFT:
+				return \"LMB\"
+			MOUSE_BUTTON_RIGHT:
+				return \"RMB\"
+			MOUSE_BUTTON_MIDDLE:
+				return \"MMB\"
+			MOUSE_BUTTON_XBUTTON1:
+				return \"M4\"
+			MOUSE_BUTTON_XBUTTON2:
+				return \"M5\"
+
+	var raw := ev.as_text()
+	raw = raw.replace(\" (Physical)\", \"\")
+	raw = raw.replace(\"Physical\", \"\")
+	raw = raw.replace(\" Mouse Button\", \"\")
+	raw = raw.replace(\"-\", \"\")
+	raw = raw.replace(\":\", \"\")
+	raw = raw.strip_edges()
+
+	if KEY_LABEL_OVERRIDES.has(raw):
+		return KEY_LABEL_OVERRIDES[raw]
+
+	return raw
+
+func _ready() -> void:
+	
+	control.visible = false
+	tooltip_label.visible = false
+	
+	_setup_focus_neighbors()
+	_update_all_button_labels()
+
+	back_button.pressed.connect(func(): back_requested.emit())
+	reset_defaults_button.pressed.connect(_on_reset_defaults_requested)
+
+func _on_reset_defaults_requested() -> void:
+	remapping_button = null
+	remapping_action = \"\"
+	tooltip_label.visible = false
+	SaveManager.reset_input_mappings_to_default()
+	AudioManager.play_sfx(reset_sound)
+	_update_all_button_labels()
+
+func _setup_focus_neighbors() -> void:
+	var col1_buttons = _get_buttons_in_column(column_1)
+	var col2_buttons = _get_buttons_in_column(column_2)
+
+	var max_rows = max(col1_buttons.size(), col2_buttons.size())
+
+	var col1_last = col1_buttons.back() if col1_buttons.size() > 0 else reset_defaults_button
+	var col2_last = col2_buttons.back() if col2_buttons.size() > 0 else back_button
+	var col1_first = col1_buttons[0] if col1_buttons.size() > 0 else reset_defaults_button
+
+	# 1. Strict Vertical & Horizontal wiring for Column 1
+	for i in range(col1_buttons.size()):
+		var btn = col1_buttons[i]
+
+		if i > 0:
+			btn.focus_neighbor_top = col1_buttons[i - 1].get_path()
+		else:
+			btn.focus_neighbor_top = back_button.get_path()
+
+		if i < col1_buttons.size() - 1:
+			btn.focus_neighbor_bottom = col1_buttons[i + 1].get_path()
+		else:
+			btn.focus_neighbor_bottom = reset_defaults_button.get_path()
+
+		# TRAP LEFT: Prevent pressing left from escaping Column 1
+		btn.focus_neighbor_left = btn.get_path()
+
+	# 2. Strict Vertical & Horizontal wiring for Column 2
+	for i in range(col2_buttons.size()):
+		var btn = col2_buttons[i]
+
+		if i > 0:
+			btn.focus_neighbor_top = col2_buttons[i - 1].get_path()
+		else:
+			btn.focus_neighbor_top = back_button.get_path()
+
+		if i < col2_buttons.size() - 1:
+			btn.focus_neighbor_bottom = col2_buttons[i + 1].get_path()
+		else:
+			btn.focus_neighbor_bottom = reset_defaults_button.get_path()
+
+	# 3. Strict Horizontal bridging between columns at the same index
+	for i in range(max_rows):
+		var btn1 = col1_buttons[i] if i < col1_buttons.size() else null
+		var btn2 = col2_buttons[i] if i < col2_buttons.size() else null
+
+		if btn1 and btn2:
+			btn1.focus_neighbor_right = btn2.get_path()
+			btn2.focus_neighbor_left = btn1.get_path()
+		elif btn2:
+			btn2.focus_neighbor_left = btn2.get_path()
+
+	# 4. Wiring for ResetDefaultsButton (above BackButton)
+	reset_defaults_button.focus_neighbor_top = col1_last.get_path()
+	reset_defaults_button.focus_neighbor_bottom = back_button.get_path()
+	reset_defaults_button.focus_neighbor_left = col1_last.get_path()
+	reset_defaults_button.focus_neighbor_right = col2_last.get_path()
+
+	# 5. Wiring for BackButton (bottom of menu)
+	back_button.focus_neighbor_top = reset_defaults_button.get_path()
+	back_button.focus_neighbor_bottom = col1_first.get_path()
+
+	
+func _get_buttons_in_column(col: VBoxContainer) -> Array:
+	var buttons = []
+	for row in col.get_children():		
+		if row is HBoxContainer:
+			for child in row.get_children():
+				if child is Button:
+					buttons.append(child)
+					if not child.pressed.is_connected(_on_button_pressed):
+						child.pressed.connect(_on_button_pressed.bind(child))
+	return buttons
+
+func _update_all_button_labels() -> void:
+	var col1_buttons = _get_buttons_in_column(column_1)
+	var col2_buttons = _get_buttons_in_column(column_2)
+	for btn in col1_buttons + col2_buttons:
+		_update_button_text_for_action(btn)
+
+func _update_button_text_for_action(btn: Button) -> void:
+	var action_name = btn.name.replace(\"Button\", \"\")
+	if InputMap.has_action(action_name):
+		var events = InputMap.action_get_events(action_name)
+		if events.size() > 0:
+			btn.text = _format_input_event_label(events[0])
+		else:
+			btn.text = \"Unassigned\"
+			
+func _on_button_pressed(btn: Button) -> void:
+	
+	if remapping_button != null:
+		return
+		
+	var action_name = btn.name.replace(\"Button\", \"\")
+	
+	if InputMap.has_action(action_name):
+		remapping_button = btn
+		remapping_action = action_name
+		btn.text = \"???\"
+		tooltip_label.visible = true
+		
+
+func _input(event: InputEvent) -> void:
+	if remapping_button == null:
+		return
+
+	# Block gamepad buttons and stick/trigger motions in keyboard menu
+	if event is InputEventJoypadButton or event is InputEventJoypadMotion:
+		if event.is_pressed() or (event is InputEventJoypadMotion and abs(event.axis_value) >= 0.5):
+			get_viewport().set_input_as_handled()
+			return
+	
+	if event is InputEventMouseButton and event.double_click:
+		get_viewport().set_input_as_handled()
+		return
+
+	if (event is InputEventMouseButton or event is InputEventKey) and event.is_pressed():
+		get_viewport().set_input_as_handled()
+
+		InputMap.action_erase_events(remapping_action)
+		InputMap.action_add_event(remapping_action, event)
+		if event is InputEventKey:
+			print(\"Action:\", remapping_action, \" | pressed keycode:\", event.keycode, \" physical:\", event.physical_keycode, \" | events now:\", InputMap.action_get_events(remapping_action))
+		elif event is InputEventMouseButton:
+			print(\"Action:\", remapping_action, \" | mouse button:\", event.button_index, \" | events now:\", InputMap.action_get_events(remapping_action))
+
+		_update_button_text_for_action(remapping_button)
+		remapping_button = null
+		remapping_action = \"\"
+		tooltip_label.visible = false
+		SaveManager.save_input_mappings()
+"
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_1b0dj"]
+bg_color = Color(0.8980392, 0.34509805, 0.34509805, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_r20u5"]
+bg_color = Color(0.8980392, 0.34509805, 0.34509805, 1)
+
+[node name="KeyboardMapScene" type="CanvasLayer" unique_id=1872305535]
+layer = 200
+script = SubResource("GDScript_yg5kw")
+reset_sound = ExtResource("1_r20u5")
+
+[node name="Control" type="Control" parent="." unique_id=2117146696]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("2_12lqh")
+
+[node name="ColorRect" type="ColorRect" parent="Control" unique_id=1508108511]
+custom_minimum_size = Vector2(234, 129)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -110.0
+offset_top = -55.0
+offset_right = 110.0
+offset_bottom = 55.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.9411765)
+
+[node name="TooltipLabel" type="Label" parent="Control/ColorRect" unique_id=197155590]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -13.0
+grow_horizontal = 2
+grow_vertical = 0
+theme = ExtResource("2_12lqh")
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_styles/normal = SubResource("StyleBoxFlat_1b0dj")
+theme_override_styles/focus = SubResource("StyleBoxFlat_r20u5")
+text = "MENU_TOOLTIP_KEYBOARD"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="KeyboardMenu" type="VBoxContainer" parent="Control" unique_id=1440622199]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -101.0
+offset_top = -31.5
+offset_right = 101.0
+offset_bottom = 31.5
+grow_horizontal = 2
+grow_vertical = 2
+alignment = 1
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Control/KeyboardMenu" unique_id=1444517190]
+layout_mode = 2
+theme_override_constants/separation = 24
+alignment = 1
+
+[node name="Column1" type="VBoxContainer" parent="Control/KeyboardMenu/HBoxContainer" unique_id=1946020967]
+custom_minimum_size = Vector2(80, 0)
+layout_mode = 2
+
+[node name="Row1" type="HBoxContainer" parent="Control/KeyboardMenu/HBoxContainer/Column1" unique_id=1779522691]
+layout_mode = 2
+
+[node name="UpLabel" type="Label" parent="Control/KeyboardMenu/HBoxContainer/Column1/Row1" unique_id=1030202359]
+layout_mode = 2
+theme = ExtResource("2_12lqh")
+text = "MENU_UP"
+
+[node name="Spacer" type="Control" parent="Control/KeyboardMenu/HBoxContainer/Column1/Row1" unique_id=602629020]
+custom_minimum_size = Vector2(8, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="UpButton" type="Button" parent="Control/KeyboardMenu/HBoxContainer/Column1/Row1" unique_id=953167783]
+layout_mode = 2
+theme = ExtResource("2_12lqh")
+text = "MENU_UP"
+
+[node name="Row2" type="HBoxContainer" parent="Control/KeyboardMenu/HBoxContainer/Column1" unique_id=1034668687]
+layout_mode = 2
+
+[node name="DownLabel" type="Label" parent="Control/KeyboardMenu/HBoxContainer/Column1/Row2" unique_id=592516215]
+layout_mode = 2
+theme = ExtResource("2_12lqh")
+text = "MENU_DOWN"
+
+[node name="Spacer" type="Control" parent="Control/KeyboardMenu/HBoxContainer/Column1/Row2" unique_id=1332649134]
+custom_minimum_size = Vector2(8, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="DownButton" type="Button" parent="Control/KeyboardMenu/HBoxContainer/Column1/Row2" unique_id=1041898402]
+layout_mode = 2
+theme = ExtResource("2_12lqh")
+text = "MENU_DOWN"
+
+[node name="Row3" type="HBoxContainer" parent="Control/KeyboardMenu/HBoxContainer/Column1" unique_id=1460420133]
+layout_mode = 2
+
+[node name="LeftLabel" type="Label" parent="Control/KeyboardMenu/HBoxContainer/Column1/Row3" unique_id=1048413375]
+layout_mode = 2
+theme = ExtResource("2_12lqh")
+text = "MENU_LEFT"
+
+[node name="Spacer" type="Control" parent="Control/KeyboardMenu/HBoxContainer/Column1/Row3" unique_id=1523154590]
+custom_minimum_size = Vector2(8, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="LeftButton" type="Button" parent="Control/KeyboardMenu/HBoxContainer/Column1/Row3" unique_id=1643864332]
+layout_mode = 2
+theme = ExtResource("2_12lqh")
+text = "MENU_LEFT"
+
+[node name="Row4" type="HBoxContainer" parent="Control/KeyboardMenu/HBoxContainer/Column1" unique_id=191170463]
+layout_mode = 2
+
+[node name="RightLabel" type="Label" parent="Control/KeyboardMenu/HBoxContainer/Column1/Row4" unique_id=2019222002]
+layout_mode = 2
+theme = ExtResource("2_12lqh")
+text = "MENU_RIGHT"
+
+[node name="Spacer" type="Control" parent="Control/KeyboardMenu/HBoxContainer/Column1/Row4" unique_id=134223523]
+custom_minimum_size = Vector2(8, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="RightButton" type="Button" parent="Control/KeyboardMenu/HBoxContainer/Column1/Row4" unique_id=1703415]
+layout_mode = 2
+theme = ExtResource("2_12lqh")
+text = "MENU_RIGHT"
+
+[node name="Row5" type="HBoxContainer" parent="Control/KeyboardMenu/HBoxContainer/Column1" unique_id=1371661844]
+layout_mode = 2
+
+[node name="MapLabel" type="Label" parent="Control/KeyboardMenu/HBoxContainer/Column1/Row5" unique_id=1419440037]
+layout_mode = 2
+theme = ExtResource("2_12lqh")
+text = "MENU_MAP"
+
+[node name="Spacer" type="Control" parent="Control/KeyboardMenu/HBoxContainer/Column1/Row5" unique_id=535135666]
+custom_minimum_size = Vector2(8, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="MapButton" type="Button" parent="Control/KeyboardMenu/HBoxContainer/Column1/Row5" unique_id=993991260]
+layout_mode = 2
+theme = ExtResource("2_12lqh")
+text = "MENU_MAP"
+
+[node name="Column2" type="VBoxContainer" parent="Control/KeyboardMenu/HBoxContainer" unique_id=366647842]
+custom_minimum_size = Vector2(80, 0)
+layout_mode = 2
+
+[node name="Row1" type="HBoxContainer" parent="Control/KeyboardMenu/HBoxContainer/Column2" unique_id=332978970]
+layout_mode = 2
+
+[node name="JumpLabel" type="Label" parent="Control/KeyboardMenu/HBoxContainer/Column2/Row1" unique_id=1656033847]
+layout_mode = 2
+theme = ExtResource("2_12lqh")
+text = "MENU_JUMP"
+
+[node name="Spacer" type="Control" parent="Control/KeyboardMenu/HBoxContainer/Column2/Row1" unique_id=2062418919]
+custom_minimum_size = Vector2(8, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="JumpButton" type="Button" parent="Control/KeyboardMenu/HBoxContainer/Column2/Row1" unique_id=1672583145]
+layout_mode = 2
+theme = ExtResource("2_12lqh")
+text = "MENU_JUMP"
+
+[node name="Row2" type="HBoxContainer" parent="Control/KeyboardMenu/HBoxContainer/Column2" unique_id=1780796193]
+layout_mode = 2
+
+[node name="AttackLabel" type="Label" parent="Control/KeyboardMenu/HBoxContainer/Column2/Row2" unique_id=621036493]
+layout_mode = 2
+theme = ExtResource("2_12lqh")
+text = "MENU_ATTACK"
+
+[node name="Spacer" type="Control" parent="Control/KeyboardMenu/HBoxContainer/Column2/Row2" unique_id=1756834945]
+custom_minimum_size = Vector2(8, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="AttackButton" type="Button" parent="Control/KeyboardMenu/HBoxContainer/Column2/Row2" unique_id=685447313]
+layout_mode = 2
+theme = ExtResource("2_12lqh")
+text = "MENU_ATTACK"
+
+[node name="Row3" type="HBoxContainer" parent="Control/KeyboardMenu/HBoxContainer/Column2" unique_id=865426348]
+layout_mode = 2
+
+[node name="RollLabel" type="Label" parent="Control/KeyboardMenu/HBoxContainer/Column2/Row3" unique_id=201382446]
+layout_mode = 2
+theme = ExtResource("2_12lqh")
+text = "MENU_ROLL"
+
+[node name="Spacer" type="Control" parent="Control/KeyboardMenu/HBoxContainer/Column2/Row3" unique_id=1390535702]
+custom_minimum_size = Vector2(8, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="RollButton" type="Button" parent="Control/KeyboardMenu/HBoxContainer/Column2/Row3" unique_id=1515859995]
+layout_mode = 2
+theme = ExtResource("2_12lqh")
+text = "MENU_ROLL"
+
+[node name="Row4" type="HBoxContainer" parent="Control/KeyboardMenu/HBoxContainer/Column2" unique_id=710543660]
+layout_mode = 2
+
+[node name="SpecialLabel" type="Label" parent="Control/KeyboardMenu/HBoxContainer/Column2/Row4" unique_id=1823457679]
+layout_mode = 2
+theme = ExtResource("2_12lqh")
+text = "MENU_SPECIAL"
+
+[node name="Spacer" type="Control" parent="Control/KeyboardMenu/HBoxContainer/Column2/Row4" unique_id=2066611417]
+custom_minimum_size = Vector2(8, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="SpecialButton" type="Button" parent="Control/KeyboardMenu/HBoxContainer/Column2/Row4" unique_id=1006659338]
+layout_mode = 2
+theme = ExtResource("2_12lqh")
+text = "MENU_SPECIAL"
+
+[node name="Row5" type="HBoxContainer" parent="Control/KeyboardMenu/HBoxContainer/Column2" unique_id=1404797159]
+layout_mode = 2
+
+[node name="PauseLabel" type="Label" parent="Control/KeyboardMenu/HBoxContainer/Column2/Row5" unique_id=1820687742]
+layout_mode = 2
+theme = ExtResource("2_12lqh")
+text = "MENU_PAUSE"
+
+[node name="Spacer" type="Control" parent="Control/KeyboardMenu/HBoxContainer/Column2/Row5" unique_id=1260246625]
+custom_minimum_size = Vector2(8, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="PauseButton" type="Button" parent="Control/KeyboardMenu/HBoxContainer/Column2/Row5" unique_id=1550594017]
+layout_mode = 2
+theme = ExtResource("2_12lqh")
+text = "MENU_PAUSE"
+
+[node name="BackButtonSpacer" type="Control" parent="Control/KeyboardMenu" unique_id=1845125852]
+custom_minimum_size = Vector2(0, 2)
+layout_mode = 2
+
+[node name="ResetDefaultsButton" type="Button" parent="Control/KeyboardMenu" unique_id=2019839802]
+layout_mode = 2
+size_flags_horizontal = 4
+theme = ExtResource("2_12lqh")
+text = "MENU_RESET_DEFAULTS"
+
+[node name="BackButton" type="Button" parent="Control/KeyboardMenu" unique_id=2011371650]
+layout_mode = 2
+size_flags_horizontal = 4
+theme = ExtResource("2_12lqh")
+text = "MENU_BACK"

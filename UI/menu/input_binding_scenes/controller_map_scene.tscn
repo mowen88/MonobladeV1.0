@@ -1,0 +1,214 @@
+[gd_scene format=3 uid="uid://bca0uu3m7ybh7"]
+
+[ext_resource type="Script" uid="uid://cgjmjiw0hmjjk" path="res://UI/menu/input_binding_scenes/controller_map_scene.gd" id="1_21sq6"]
+[ext_resource type="Theme" uid="uid://bibbrrx3ud3nw" path="res://UI/ui_theme.tres" id="2_j3rfx"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_c3ohh"]
+bg_color = Color(0.6, 0.22352941, 0.6, 1)
+
+[node name="ControllerMapScene" type="CanvasLayer" unique_id=322445668]
+script = ExtResource("1_21sq6")
+
+[node name="Control" type="Control" parent="." unique_id=1965363509]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("2_j3rfx")
+
+[node name="ColorRect" type="ColorRect" parent="Control" unique_id=1508108511]
+custom_minimum_size = Vector2(220, 110)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -110.0
+offset_top = -55.0
+offset_right = 110.0
+offset_bottom = 55.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.29803923, 0.23921569, 0.34117648, 1)
+
+[node name="KeyboardMenu" type="VBoxContainer" parent="Control" unique_id=1440622199]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -264.0
+offset_top = -91.5
+offset_right = 264.0
+offset_bottom = 91.5
+grow_horizontal = 2
+grow_vertical = 2
+alignment = 1
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Control/KeyboardMenu" unique_id=1444517190]
+layout_mode = 2
+theme_override_constants/separation = 32
+alignment = 1
+
+[node name="Column1" type="VBoxContainer" parent="Control/KeyboardMenu/HBoxContainer" unique_id=1946020967]
+custom_minimum_size = Vector2(80, 0)
+layout_mode = 2
+
+[node name="Row1" type="HBoxContainer" parent="Control/KeyboardMenu/HBoxContainer/Column1" unique_id=1779522691]
+layout_mode = 2
+
+[node name="UpLabel" type="Label" parent="Control/KeyboardMenu/HBoxContainer/Column1/Row1" unique_id=1030202359]
+layout_mode = 2
+text = "MENU_UP"
+
+[node name="Spacer" type="Control" parent="Control/KeyboardMenu/HBoxContainer/Column1/Row1" unique_id=602629020]
+custom_minimum_size = Vector2(8, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="UpButton" type="Button" parent="Control/KeyboardMenu/HBoxContainer/Column1/Row1" unique_id=953167783]
+layout_mode = 2
+text = "MENU_UP"
+
+[node name="Row2" type="HBoxContainer" parent="Control/KeyboardMenu/HBoxContainer/Column1" unique_id=1034668687]
+layout_mode = 2
+
+[node name="DownLabel" type="Label" parent="Control/KeyboardMenu/HBoxContainer/Column1/Row2" unique_id=592516215]
+layout_mode = 2
+text = "MENU_DOWN"
+
+[node name="Spacer" type="Control" parent="Control/KeyboardMenu/HBoxContainer/Column1/Row2" unique_id=1332649134]
+custom_minimum_size = Vector2(8, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="DownButton" type="Button" parent="Control/KeyboardMenu/HBoxContainer/Column1/Row2" unique_id=1041898402]
+layout_mode = 2
+text = "MENU_DOWN"
+
+[node name="Row3" type="HBoxContainer" parent="Control/KeyboardMenu/HBoxContainer/Column1" unique_id=1460420133]
+layout_mode = 2
+
+[node name="LeftLabel" type="Label" parent="Control/KeyboardMenu/HBoxContainer/Column1/Row3" unique_id=1048413375]
+layout_mode = 2
+text = "MENU_LEFT"
+
+[node name="Spacer" type="Control" parent="Control/KeyboardMenu/HBoxContainer/Column1/Row3" unique_id=1523154590]
+custom_minimum_size = Vector2(8, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="LeftButton" type="Button" parent="Control/KeyboardMenu/HBoxContainer/Column1/Row3" unique_id=1643864332]
+layout_mode = 2
+text = "MENU_LEFT"
+
+[node name="Row4" type="HBoxContainer" parent="Control/KeyboardMenu/HBoxContainer/Column1" unique_id=191170463]
+layout_mode = 2
+
+[node name="RightLabel" type="Label" parent="Control/KeyboardMenu/HBoxContainer/Column1/Row4" unique_id=2019222002]
+layout_mode = 2
+text = "MENU_RIGHT"
+
+[node name="Spacer" type="Control" parent="Control/KeyboardMenu/HBoxContainer/Column1/Row4" unique_id=134223523]
+custom_minimum_size = Vector2(8, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="RightButton" type="Button" parent="Control/KeyboardMenu/HBoxContainer/Column1/Row4" unique_id=1703415]
+layout_mode = 2
+text = "MENU_RIGHT"
+
+[node name="Column2" type="VBoxContainer" parent="Control/KeyboardMenu/HBoxContainer" unique_id=366647842]
+custom_minimum_size = Vector2(80, 0)
+layout_mode = 2
+
+[node name="Row1" type="HBoxContainer" parent="Control/KeyboardMenu/HBoxContainer/Column2" unique_id=332978970]
+layout_mode = 2
+
+[node name="JumpLabel" type="Label" parent="Control/KeyboardMenu/HBoxContainer/Column2/Row1" unique_id=1656033847]
+layout_mode = 2
+text = "MENU_JUMP"
+
+[node name="Spacer" type="Control" parent="Control/KeyboardMenu/HBoxContainer/Column2/Row1" unique_id=2062418919]
+custom_minimum_size = Vector2(8, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="JumpButton" type="Button" parent="Control/KeyboardMenu/HBoxContainer/Column2/Row1" unique_id=1672583145]
+layout_mode = 2
+text = "MENU_JUMP"
+
+[node name="Row2" type="HBoxContainer" parent="Control/KeyboardMenu/HBoxContainer/Column2" unique_id=1780796193]
+layout_mode = 2
+
+[node name="AttackLabel" type="Label" parent="Control/KeyboardMenu/HBoxContainer/Column2/Row2" unique_id=621036493]
+layout_mode = 2
+text = "MENU_ATTACK"
+
+[node name="Spacer" type="Control" parent="Control/KeyboardMenu/HBoxContainer/Column2/Row2" unique_id=1756834945]
+custom_minimum_size = Vector2(8, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="AttackButton" type="Button" parent="Control/KeyboardMenu/HBoxContainer/Column2/Row2" unique_id=685447313]
+layout_mode = 2
+text = "MENU_ATTACK"
+
+[node name="Row3" type="HBoxContainer" parent="Control/KeyboardMenu/HBoxContainer/Column2" unique_id=710543660]
+layout_mode = 2
+
+[node name="SpecialLabel" type="Label" parent="Control/KeyboardMenu/HBoxContainer/Column2/Row3" unique_id=1823457679]
+layout_mode = 2
+text = "MENU_SPECIAL"
+
+[node name="Spacer" type="Control" parent="Control/KeyboardMenu/HBoxContainer/Column2/Row3" unique_id=2066611417]
+custom_minimum_size = Vector2(8, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="SpecialButton" type="Button" parent="Control/KeyboardMenu/HBoxContainer/Column2/Row3" unique_id=1006659338]
+layout_mode = 2
+text = "MENU_SPECIAL"
+
+[node name="Row4" type="HBoxContainer" parent="Control/KeyboardMenu/HBoxContainer/Column2" unique_id=1404797159]
+layout_mode = 2
+
+[node name="PauseLabel" type="Label" parent="Control/KeyboardMenu/HBoxContainer/Column2/Row4" unique_id=1820687742]
+layout_mode = 2
+text = "MENU_PAUSE"
+
+[node name="Spacer" type="Control" parent="Control/KeyboardMenu/HBoxContainer/Column2/Row4" unique_id=1260246625]
+custom_minimum_size = Vector2(8, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="PauseButton" type="Button" parent="Control/KeyboardMenu/HBoxContainer/Column2/Row4" unique_id=1550594017]
+layout_mode = 2
+text = "MENU_PAUSE"
+
+[node name="BackButtonSpacer" type="Control" parent="Control/KeyboardMenu" unique_id=1845125852]
+custom_minimum_size = Vector2(0, 8)
+layout_mode = 2
+
+[node name="BackButton" type="Button" parent="Control/KeyboardMenu" unique_id=2011371650]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "MENU_BACK"
+
+[node name="TooltipLabel" type="Label" parent="Control" unique_id=197155590]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -7.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_styles/normal = SubResource("StyleBoxFlat_c3ohh")
+text = "MENU_TOOLTIP_CONTROLLER"
+horizontal_alignment = 1
+vertical_alignment = 1
