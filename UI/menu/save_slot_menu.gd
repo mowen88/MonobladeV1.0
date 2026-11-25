@@ -9,21 +9,16 @@ func _ready() -> void:
 	$SlotRow1/SlotButton1.pressed.connect(func(): slot_requested.emit("1"))
 	$SlotRow2/SlotButton2.pressed.connect(func(): slot_requested.emit("2"))
 	$SlotRow3/SlotButton3.pressed.connect(func(): slot_requested.emit("3"))
+	$SlotRow4/SlotButton4.pressed.connect(func(): slot_requested.emit("4"))
 	
 	# Delete button selections
 	$SlotRow1/DeleteButton1.pressed.connect(func(): delete_requested.emit("1"))
 	$SlotRow2/DeleteButton2.pressed.connect(func(): delete_requested.emit("2"))
 	$SlotRow3/DeleteButton3.pressed.connect(func(): delete_requested.emit("3"))
+	$SlotRow4/DeleteButton4.pressed.connect(func(): delete_requested.emit("4"))
 	
 	# Back navigation
 	$BackButton.pressed.connect(func(): back_requested.emit())
-	
-	# Clean up focus modes safely across all nested buttons
-	for row in [$SlotRow1, $SlotRow2, $SlotRow3]:
-		for button in row.get_children():
-			if button is Control:
-				pass#button.focus_mode = Control.FOCUS_NONE
-	#$BackButton.focus_mode = Control.FOCUS_NONE
 	
 	update_slot_labels()
 	
@@ -31,8 +26,9 @@ func update_slot_labels() -> void:
 	var rows = {
 		"1": {"btn": $SlotRow1/SlotButton1, "del": $SlotRow1/DeleteButton1},
 		"2": {"btn": $SlotRow2/SlotButton2, "del": $SlotRow2/DeleteButton2},
-		"3": {"btn": $SlotRow3/SlotButton3, "del": $SlotRow3/DeleteButton3}
-	}
+		"3": {"btn": $SlotRow3/SlotButton3, "del": $SlotRow3/DeleteButton3},
+		"4": {"btn": $SlotRow4/SlotButton4, "del": $SlotRow4/DeleteButton4}
+		}
 	
 	for slot_id in rows:
 		var slot_button  = rows[slot_id]["btn"]
@@ -45,6 +41,6 @@ func update_slot_labels() -> void:
 			# Show delete only if data exists
 			delete_button.visible = true
 		else:
-			slot_button.text = "%s: %s" % [slot_id, tr("MENU_EMPTY_SLOT")]
+			slot_button.text = "%s: %s"% [slot_id, tr("MENU_EMPTY_SLOT")]
 			# Hide delete button if slot is empty
 			delete_button.visible = false

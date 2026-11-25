@@ -11,24 +11,12 @@
 [ext_resource type="Texture2D" uid="uid://tdptx7ntni4q" path="res://UI/gameplay/PauseMenu/map_sprites/player_map_icon.png" id="5_enss6"]
 [ext_resource type="Texture2D" uid="uid://clj0kekmn243s" path="res://UI/gameplay/PauseMenu/map_sprites/b_02.png" id="5_iph03"]
 [ext_resource type="Texture2D" uid="uid://crrsmqw6t1pee" path="res://UI/gameplay/PauseMenu/map_sprites/a_05.png" id="6_bihx0"]
-[ext_resource type="Theme" uid="uid://bwyqxsqeh0mbb" path="res://UI/menu/menu_button_theme.tres" id="7_3t8t5"]
 [ext_resource type="Texture2D" uid="uid://5h50inxvrcam" path="res://UI/gameplay/PauseMenu/map_sprites/b_03.png" id="9_2p404"]
+[ext_resource type="Theme" uid="uid://bibbrrx3ud3nw" path="res://UI/ui_theme.tres" id="13_vaa6o"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_5tqd0"]
 shader = ExtResource("3_vaa6o")
 shader_parameter/fade_width = 0.15
-
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_3t8t5"]
-
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_wii3h"]
-
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_d5ee1"]
-
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_bihx0"]
-
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_2p404"]
-
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_dagy4"]
 
 [node name="MapScene" type="Control" unique_id=2027254112]
 layout_mode = 3
@@ -45,8 +33,8 @@ max_drag_range_y = 50.0
 
 [node name="ViewportControl" type="Control" parent="." unique_id=691112061]
 material = SubResource("ShaderMaterial_5tqd0")
-clip_contents = true
 custom_minimum_size = Vector2(210, 70)
+clip_contents = true
 layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
@@ -123,11 +111,5 @@ offset_top = 73.0
 offset_right = 20.0
 offset_bottom = 83.0
 grow_horizontal = 2
-theme = ExtResource("7_3t8t5")
-theme_override_styles/normal = SubResource("StyleBoxEmpty_3t8t5")
-theme_override_styles/pressed = SubResource("StyleBoxEmpty_wii3h")
-theme_override_styles/hover = SubResource("StyleBoxEmpty_d5ee1")
-theme_override_styles/hover_pressed = SubResource("StyleBoxEmpty_bihx0")
-theme_override_styles/hover_pressed_mirrored = SubResource("StyleBoxEmpty_2p404")
-theme_override_styles/focus = SubResource("StyleBoxEmpty_dagy4")
+theme = ExtResource("13_vaa6o")
 text = "Recentre"

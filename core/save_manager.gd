@@ -189,20 +189,20 @@ func _update_game_completion_percentage(slot_id: String) -> void:
 ## Formats both total play time and map completion percentage into a clean, combined string layout
 func get_game_time_as_string(slot_id: String = current_slot) -> String:
 	if not SAVE_DATA.has(slot_id):
-		return "00h 00m 00s | 0%"
+		return "00h00m00s | 0%"
 		
 	var total_seconds: int = int(SAVE_DATA[slot_id].get("game_time", 0.0))
 	var hours: int = total_seconds / 3600
 	var minutes: int = (total_seconds % 3600) / 60
 	var seconds: int = total_seconds % 60
 	
-	var time_string = "%02dh %02dm %02ds" % [hours, minutes, seconds]
+	var time_string = "%02dh%02dm%02ds" % [hours, minutes, seconds]
 	
 	return time_string
 	
 func get_completion_percent_as_string(slot_id: String = current_slot) -> String:
 	var map_percent: int = SAVE_DATA[slot_id].get("percent_complete", 0)
-	return str(map_percent) + " %"
+	return str(map_percent) + "%"
 	
 # --- SETTINGS MANAGEMENT ---
 

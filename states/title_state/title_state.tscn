@@ -8,6 +8,13 @@
 [ext_resource type="Texture2D" uid="uid://lqyedppc1t73" path="res://states/title_state/particle.png" id="3_s26ap"]
 [ext_resource type="Texture2D" uid="uid://b3t7xflgbn38k" path="res://states/title_state/title_border.png" id="5_is0r6"]
 
+[sub_resource type="Curve" id="Curve_qf88d"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_2gmlf"]
+curve = SubResource("Curve_qf88d")
+
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_s26ap"]
 particle_flag_disable_z = true
 emission_shape = 3
@@ -22,6 +29,7 @@ angular_velocity_min = -90.000015
 angular_velocity_max = 89.999985
 gravity = Vector3(0, 50, 0)
 scale_min = 0.19999999
+alpha_curve = SubResource("CurveTexture_2gmlf")
 turbulence_enabled = true
 turbulence_noise_scale = 5.0
 
@@ -40,7 +48,6 @@ grow_vertical = 2
 texture = ExtResource("2_dvdlm")
 
 [node name="GPUParticles2D" type="GPUParticles2D" parent="CanvasLayer" unique_id=1892837865]
-modulate = Color(1, 1, 1, 0.5019608)
 position = Vector2(127, -8)
 amount = 80
 texture = ExtResource("3_s26ap")

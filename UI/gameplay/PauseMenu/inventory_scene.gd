@@ -39,6 +39,56 @@ func _ready() -> void:
 func update_current_details()-> void:
 	populate_abilities()
 	populate_items()
+	_setup_horizontal_focus_neighbors()
+
+func _get_last_visible_ability_button() -> BaseButton:
+	var last_btn: BaseButton = null
+	for btn in ability_buttons.values():
+		if btn is BaseButton and btn.visible and btn.focus_mode != Control.FOCUS_NONE:
+			last_btn = btn
+	return last_btn
+
+func _get_first_item_button() -> Button:
+	for row in items_container.get_children():
+		if row is Control and row.visible:
+			var btn := row.get_node_or_null("ItemNameButton") as Button
+			if btn and btn.visible and btn.focus_mode != Control.FOCUS_NONE:
+				return btn
+	return null
+
+func _get_visible_grid_buttons_in_tree_order() -> Array[BaseButton]:
+	var result: Array[BaseButton] = []
+	# Collect visible ability buttons in their slot order
+	for btn in ability_buttons.values():
+		if btn is BaseButton and btn.visible and btn.focus_mode != Control.FOCUS_NONE:
+			result.append(btn)
+	return result
+
+func _setup_horizontal_focus_neighbors() -> void:
+	var last_ability := _get_last_visible_ability_button()
+	var first_item := _get_first_item_button()
+	var visible_abilities := _get_visible_grid_buttons_in_tree_order()
+	var cols := maxi(ability_container.columns, 1)
+
+	# Reset right neighbors first
+	for btn in ability_buttons.values():
+		if btn is Control:
+			btn.focus_neighbor_right = NodePath("")
+
+	# Scroll container -> last visible ability slot on left
+	for row in items_container.get_children():
+		var item_btn := row.get_node_or_null("ItemNameButton") as Button
+		if item_btn and last_ability:
+			item_btn.focus_neighbor_left = item_btn.get_path_to(last_ability)
+
+	# Any visible ability at the rightmost column (or the final visible ability overall) -> first item on right
+	if first_item:
+		for i in range(visible_abilities.size()):
+			var btn := visible_abilities[i]
+			var is_rightmost_col := ((i + 1) % cols) == 0
+			var is_last_overall := (i == visible_abilities.size() - 1)
+			if is_rightmost_col or is_last_overall:
+				btn.focus_neighbor_right = btn.get_path_to(first_item)
 
 func get_status_stats(player: Node2D) -> void:
 	var slot_data = SaveManager.SAVE_DATA[SaveManager.current_slot]

@@ -218,7 +218,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_lfe85")
 }],
-"loop": true,
+"loop": 1,
 "name": &"Beam Blade",
 "speed": 12.0
 }, {
@@ -259,7 +259,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_ionkl")
 }],
-"loop": true,
+"loop": 1,
 "name": &"Glide",
 "speed": 9.0
 }, {
@@ -300,7 +300,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_ionkl")
 }],
-"loop": true,
+"loop": 1,
 "name": &"Key cube",
 "speed": 9.0
 }]
@@ -376,6 +376,8 @@ grow_horizontal = 2
 grow_vertical = 2
 texture_normal = ExtResource("2_weopi")
 texture_pressed = ExtResource("3_y37hj")
+texture_hover = ExtResource("3_y37hj")
+texture_focused = ExtResource("3_y37hj")
 
 [node name="GlideSlot" type="Panel" parent="HBoxContainer/StatusPanel/VBoxContainer/GridContainer" unique_id=770196861]
 custom_minimum_size = Vector2(12, 12)
@@ -393,6 +395,8 @@ grow_horizontal = 2
 grow_vertical = 2
 texture_normal = ExtResource("2_l2ehc")
 texture_pressed = ExtResource("3_r1yb7")
+texture_hover = ExtResource("3_r1yb7")
+texture_focused = ExtResource("3_r1yb7")
 
 [node name="JumpAttackSlot" type="Panel" parent="HBoxContainer/StatusPanel/VBoxContainer/GridContainer" unique_id=446381008]
 custom_minimum_size = Vector2(12, 12)
@@ -408,6 +412,8 @@ grow_horizontal = 2
 grow_vertical = 2
 texture_normal = ExtResource("3_pgd37")
 texture_pressed = ExtResource("5_iahoa")
+texture_hover = ExtResource("5_iahoa")
+texture_focused = ExtResource("5_iahoa")
 
 [node name="WaterWalkSlot" type="Panel" parent="HBoxContainer/StatusPanel/VBoxContainer/GridContainer" unique_id=116649645]
 custom_minimum_size = Vector2(12, 12)
@@ -423,6 +429,8 @@ grow_horizontal = 2
 grow_vertical = 2
 texture_normal = ExtResource("4_008e8")
 texture_pressed = ExtResource("7_weopi")
+texture_hover = ExtResource("7_weopi")
+texture_focused = ExtResource("7_weopi")
 
 [node name="GroundSlamSlot" type="Panel" parent="HBoxContainer/StatusPanel/VBoxContainer/GridContainer" unique_id=258760038]
 custom_minimum_size = Vector2(12, 12)
@@ -438,6 +446,8 @@ grow_horizontal = 2
 grow_vertical = 2
 texture_normal = ExtResource("5_r6dmg")
 texture_pressed = ExtResource("9_y37hj")
+texture_hover = ExtResource("9_y37hj")
+texture_focused = ExtResource("9_y37hj")
 
 [node name="Panel6" type="Panel" parent="HBoxContainer/StatusPanel/VBoxContainer/GridContainer" unique_id=164245682]
 custom_minimum_size = Vector2(12, 12)
@@ -493,6 +503,7 @@ grow_vertical = 2
 size_flags_horizontal = 3
 theme_override_styles/panel = SubResource("StyleBoxEmpty_hl8jd")
 theme_override_styles/focus = SubResource("StyleBoxFlat_4g7hf")
+follow_focus = true
 horizontal_scroll_mode = 0
 vertical_scroll_mode = 2
 scroll_hint_mode = 1

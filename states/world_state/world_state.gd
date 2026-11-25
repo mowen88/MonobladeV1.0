@@ -17,6 +17,8 @@ var in_cutscene: bool = false
 
 func _ready():
 	
+	Input.mouse_mode = Input.MOUSE_MODE_HIDDEN
+	
 	SignalBus.toggle_collect_ability_ui.connect(func(_val, _name): _toggle_collect_ability_pause())
 	SignalBus.toggle_gameplay_ui.connect(func(val): gameplay_ui.visible = val)
 	#SignalBus.toggle_touch_controller.connect(func(val): touch_controller.visible = val)
@@ -45,13 +47,10 @@ func _process(delta: float) -> void:
 func _unhandled_input(event: InputEvent) -> void:
 	if InputManager.cutscene_lock:
 		return
-		
-	if event.is_action_pressed("Pause"):
+
+	if event.is_action_pressed("ui_cancel"): # Press Escape fallback for unpause
 		_toggle_game_pause()
-
-	if event.is_action_pressed("ui_cancel"): # Press Escape/Back to clear
-		SignalBus.camera_override_cleared.emit()
-
+				
 func _toggle_collect_ability_pause() -> void:
 	get_tree().paused = not get_tree().paused
 	#touch_controller.visible = not get_tree().paused
@@ -70,6 +69,10 @@ func _toggle_game_pause() -> void:
 		
 		if get_tree().paused:
 			inventory_overlay.open_inventory()
+			if InputManager.using_mouse:
+				Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+		else:
+			Input.mouse_mode = Input.MOUSE_MODE_HIDDEN
 
 func _on_hit_stop(duration: float) -> void:
 	Engine.time_scale = 0.0 # Freeze everything
@@ -157,7 +160,6 @@ func _register_room_visit(room_name: String) -> void:
 	# Only add if it's not already saved and not already tracked in the active run session
 	if not permanent_visited.has(room_name_str) and not player.session_visited_rooms.has(room_name_str):
 		player.session_visited_rooms.append(room_name_str)
-		print(player.session_visited_rooms)
 		print_rich("[color=orange]WORLD MANAGER: Discovered new room (Unsaved Run): %s[/color]" % room_name_str)
 		
 		# Recalculate percentage live in memory

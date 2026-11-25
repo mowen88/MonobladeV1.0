@@ -10,6 +10,9 @@ extends Node2D
 
 func _ready() -> void:
 	
+	if InputManager.using_mouse:
+		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+	
 	# Keep inputs locked while the initial title splash plays out
 	await get_tree().create_timer(0.2).timeout
 	_tween_in_character()

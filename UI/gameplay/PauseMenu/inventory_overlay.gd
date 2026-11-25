@@ -19,10 +19,16 @@ var active_tween: Tween
 
 # Remember the last opened tab across pauses (default to System, which is index 3)
 static var last_tab_index: int = 3
+var last_hovered_tab_button: Button = null
 
 var underline_height = 1.0
 
 func _ready() -> void:
+	
+	_setup_header_focus_neighbors()
+	
+	InputManager.mouse_mode_enabled.connect(_sync_tab_mouse_filter)
+	
 	# Connect unpause signal to close button
 	close_button.pressed.connect(func(): unpause_requested.emit())
 
@@ -31,18 +37,41 @@ func _ready() -> void:
 		if child is Control:
 			tabs.append(child)
 	
-	# Connect the header buttons and make them flat by default
+	# Connect the header buttons
 	var buttons = tab_header_bar.get_children()
 	for i in range(buttons.size()):
 		if buttons[i] is Button:
 			buttons[i].pressed.connect(_on_tab_button_pressed.bind(i))
-			buttons[i].flat = true
+			buttons[i].mouse_entered.connect(func(): 
+				if InputManager.using_mouse: last_hovered_tab_button = buttons[i]
+				)
 			
 	# Initialize the menu manager ONCE right here when the overlay loads
 	if menu_manager:
 		menu_manager.initialize_menu("PauseMenu")
+	
+func _setup_header_focus_neighbors() -> void:
+	var system_btn := tab_header_bar.get_node_or_null("SystemButton") as Control
+	if system_btn and close_button:
+		system_btn.focus_neighbor_right = system_btn.get_path_to(close_button)
+		close_button.focus_neighbor_left = close_button.get_path_to(system_btn)
+	
+func _sync_tab_mouse_filter(is_using_mouse: bool) -> void:
+	var filter := Control.MOUSE_FILTER_STOP if is_using_mouse else Control.MOUSE_FILTER_IGNORE
+
+	for child in tab_header_bar.get_children():
+		if child is Control:
+			child.mouse_filter = filter
+			if not is_using_mouse and child.has_focus():
+				child.release_focus()
+	
+	if not InputManager.using_mouse and get_viewport().gui_get_focus_owner() == null:
+		if last_hovered_tab_button:
+			last_hovered_tab_button.grab_focus()
 
 func open_inventory() -> void:
+	
+	_sync_tab_mouse_filter(InputManager.using_mouse)
 	
 	# Update the UI on opening
 	quest_scene.update_current_details()
@@ -87,6 +116,8 @@ func switch_tab(new_index: int) -> void:
 	var old_tab = tabs[last_tab_index]
 	var new_tab = tabs[new_index]
 	
+	new_tab.release_focus()
+	
 	# Grab the target button directly using the index
 	var target_button = tab_header_bar.get_child(new_index) as Button
 			
@@ -122,5 +153,10 @@ func switch_tab(new_index: int) -> void:
 func _on_tab_button_pressed(new_index: int) -> void:
 	if new_index == last_tab_index:
 		return
-	
+		
 	switch_tab(new_index)
+
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_TRANSLATION_CHANGED and is_node_ready() and visible:
+		_snap_underline_deferred(last_tab_index)
+	

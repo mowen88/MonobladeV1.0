@@ -19,7 +19,6 @@ func _update_controller_button() -> void:
 	for child in get_children():
 		if child is Button:
 			if child.name == "ControllerButton":
-				print(child)
 				if InputManager.has_controller:
 					child.disabled = false
 				else:

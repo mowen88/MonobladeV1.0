@@ -30,7 +30,6 @@ func _on_open_locks() -> void:
 
 func _on_body_entered(body: Node2D) -> void:
 	if body.is_in_group("player"):
-		print("colllided")
 		_is_active(true)
 
 func _on_persistent_state_loaded(_pos: Vector2) -> void:

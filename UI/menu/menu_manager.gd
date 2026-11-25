@@ -28,7 +28,7 @@ var pending_delete_slot: String = ""
 
 var current_menu: VBoxContainer = null
 var menu_stack: Array[VBoxContainer] = []
-var using_mouse: bool = true
+
 var last_mouse_position: Vector2 = Vector2.ZERO
 var last_hovered_button: Button = null
 
@@ -79,7 +79,7 @@ func _ready() -> void:
 	# Track the hovered button with the hovered signal
 	for child in find_children("*", "Button", true, false):
 		child.mouse_entered.connect(func(): 
-			if using_mouse:
+			if InputManager.using_mouse:
 				last_hovered_button = child
 		)
 
@@ -94,14 +94,14 @@ func initialize_menu(menu_name: String = "MainMenu") -> void:
 	var fade_in = create_tween()
 	fade_in.tween_property(current_menu, "modulate:a", 1.0, fade_duration)
 		
-func _show_input_map_overlay(input_map_type: String, show: bool) -> void:
+func _show_input_map_overlay(input_type: String, show: bool) -> void:
 	if InputManager.input_lock:
 		return
 
 	InputManager.input_lock = true
 	
 	# Set the type of overlay based on the type parameter passed in
-	var input_map_scene = keyboard_map_scene.control if input_map_type == "Keyboard" else controller_map_scene.control
+	var input_map_scene = keyboard_map_scene.control if input_type == "Keyboard" else controller_map_scene.control
 
 	if show:
 		AudioManager.play_sfx(select_sound)
@@ -263,29 +263,30 @@ func _input(event: InputEvent) -> void:
 	# Detect mouse movement to switch to mouse mode
 	if event is InputEventMouseMotion:
 		if event.relative.length() > 1:
-			if not using_mouse:
-				using_mouse = true
+			if not InputManager.using_mouse:
+				InputManager.using_mouse = true
 				Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 				
-				# Enable the hover button styles for mouse mode
-				_set_buttons_hover_style(true)
+				# Enable mouse focus
+				_set_mouse_input_enabled(true)
 				
 				var focused = get_viewport().gui_get_focus_owner()
-				if focused:
+				if focused is Button:
 					focused.release_focus()
+					last_hovered_button = focused
 
 	# Detect keyboard/gamepad navigation to switch mode
 	elif (event.is_action_pressed("ui_up") or event.is_action_pressed("ui_down") or 
 		  event.is_action_pressed("ui_left") or event.is_action_pressed("ui_right") or 
 		  event.is_action_pressed("ui_accept")):
 		
-		if using_mouse:
-			using_mouse = false
+		if InputManager.using_mouse:
+			InputManager.using_mouse = false
 			last_mouse_position = get_viewport().get_mouse_position()
 			Input.mouse_mode = Input.MOUSE_MODE_HIDDEN
 			
-			# Disable the hover button styles for keyboard/gamepad mode
-			_set_buttons_hover_style(false)
+			# Disable mouse focus
+			_set_mouse_input_enabled(false)
 		
 		if get_viewport().gui_get_focus_owner() == null:
 			if last_hovered_button:
@@ -297,19 +298,16 @@ func _input(event: InputEvent) -> void:
 			get_viewport().set_input_as_handled()
 
 # Helper function to dynamically toggle button hover states
-func _set_buttons_hover_style(enabled: bool) -> void:
-	for child in find_children("*", "Button", true, false):
+func _set_mouse_input_enabled(enabled: bool) -> void:
+	for btn in find_children("*", "Button", true, false):
 
 		if enabled:
-			child.remove_theme_color_override("font_hover_color")
-			child.remove_theme_color_override("font_hover_pressed_color")
+			btn.mouse_filter = Control.MOUSE_FILTER_STOP
 		else:
-			var normal_font_color = child.get_theme_color("font_color")
-			child.add_theme_color_override("font_hover_color", normal_font_color)
-			child.add_theme_color_override("font_hover_pressed_color", normal_font_color)
+			btn.mouse_filter = Control.MOUSE_FILTER_IGNORE
 
 func _focus_first_button(node: Node) -> void:
-	if using_mouse:
+	if InputManager.using_mouse:
 		return
 		
 	for child in node.find_children("*", "Button", true, false):

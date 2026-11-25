@@ -11,6 +11,7 @@
 [ext_resource type="PackedScene" uid="uid://c6sj10estib1c" path="res://states/world_state/components/health_component.tscn" id="9_5mngh"]
 [ext_resource type="PackedScene" uid="uid://c12tbs10lxuco" path="res://states/world_state/components/move_component.tscn" id="10_ltday"]
 [ext_resource type="PackedScene" uid="uid://bq2r808rtkdp" path="res://states/world_state/components/knockback_component.tscn" id="11_tp1or"]
+[ext_resource type="PackedScene" uid="uid://d2ib61tnh3i8s" path="res://states/world_state/components/flash_component.tscn" id="12_q0yg7"]
 [ext_resource type="AudioStream" uid="uid://bhraaqi12g8b" path="res://states/world_state/entities/characters/player/player_audio/beam_cancel_sound.wav" id="13_lrmfs"]
 [ext_resource type="PackedScene" uid="uid://dduhheq66d0n2" path="res://states/world_state/components/squash_stretch_component.tscn" id="13_y4ndw"]
 [ext_resource type="PackedScene" uid="uid://d2h0ih21x6bqb" path="res://states/world_state/components/hurtbox_component.tscn" id="14_wcsl3"]
@@ -67,7 +68,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_mmy5d")
 }],
-"loop": true,
+"loop": 1,
 "name": &"idle",
 "speed": 12.0
 }]
@@ -127,7 +128,6 @@ metadata/_custom_type_script = "uid://w6r4fliln4v5"
 
 [node name="Chase" type="Node" parent="FiniteStateMachine" unique_id=860399015]
 script = ExtResource("8_66snt")
-speed = 40.0
 metadata/_custom_type_script = "uid://w6r4fliln4v5"
 
 [node name="MoveComponent" parent="." unique_id=235093058 instance=ExtResource("10_ltday")]
@@ -137,6 +137,8 @@ hurtbox_component = NodePath("../HurtboxComponent")
 bounce = 0.0
 
 [node name="HealthComponent" parent="." unique_id=1333011245 instance=ExtResource("9_5mngh")]
+
+[node name="FlashComponent" parent="." unique_id=664279283 instance=ExtResource("12_q0yg7")]
 
 [node name="SquashStretchComponent" parent="." unique_id=843710349 node_paths=PackedStringArray("sprite", "hurtbox_component") instance=ExtResource("13_y4ndw")]
 sprite = NodePath("../AnimatedSprite2D")

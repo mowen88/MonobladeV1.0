@@ -471,20 +471,20 @@ text = "MENU_SPECIAL"
 [node name="Row5" type="HBoxContainer" parent="Control/KeyboardMenu/HBoxContainer/Column2" unique_id=1404797159]
 layout_mode = 2
 
-[node name="PauseLabel" type="Label" parent="Control/KeyboardMenu/HBoxContainer/Column2/Row5" unique_id=1820687742]
+[node name="HealLabel" type="Label" parent="Control/KeyboardMenu/HBoxContainer/Column2/Row5" unique_id=1820687742]
 layout_mode = 2
 theme = ExtResource("2_12lqh")
-text = "MENU_PAUSE"
+text = "MENU_HEAL"
 
 [node name="Spacer" type="Control" parent="Control/KeyboardMenu/HBoxContainer/Column2/Row5" unique_id=1260246625]
 custom_minimum_size = Vector2(8, 0)
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="PauseButton" type="Button" parent="Control/KeyboardMenu/HBoxContainer/Column2/Row5" unique_id=1550594017]
+[node name="HealButton" type="Button" parent="Control/KeyboardMenu/HBoxContainer/Column2/Row5" unique_id=1550594017]
 layout_mode = 2
 theme = ExtResource("2_12lqh")
-text = "MENU_PAUSE"
+text = "MENU_HEAL"
 
 [node name="BackButtonSpacer" type="Control" parent="Control/KeyboardMenu" unique_id=1845125852]
 custom_minimum_size = Vector2(0, 2)

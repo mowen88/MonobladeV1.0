@@ -1,14 +1,14 @@
 keys,en,pl,fr,es,de
-SPLASH_DEVELOPED_BY,Developed by,Stworzone przez,Développé par,Desarrollado por,Entwickelt von
+SPLASH_DEVELOPED_BY,Developed by,Stworzone przez,Dï¿½veloppï¿½ par,Desarrollado por,Entwickelt von
 MENU_START_GAME,Start Game,Rozpocznij gra?,DÃ©marrer,Jugar,Spiel starten
 MENU_CREDITS,Credits,Autorzy,CrÃ©dits,CrÃ©ditos,Mitwirkende
 MENU_QUIT_GAME,Quit,,Quitter,Salir,Beenden
-MENU_QUIT_GAME_CONFIRM,Quit game?,,Quitter le jeu ?,¿Salir del juego?,Spiel beenden?
+MENU_QUIT_GAME_CONFIRM,Quit game?,,Quitter le jeu ?,ï¿½Salir del juego?,Spiel beenden?
 MENU_SETTINGS,Settings,Ustawienia,ParamÃ¨tres,Opciones,Einstellungen
 MENU_CONTROLLER,Controller,,Manette,Mando,Controller
 MENU_KEYBOARD,Keyboard,,Clavier,Teclado,Tastatur
-MENU_TOOLTIP_KEYBOARD,Press any key,,Appuyez sur une touche,Pulsa una tecla,Drücke eine Taste
-MENU_TOOLTIP_CONTROLLER,Press any controller button,,Appuyez sur un bouton de manette,Pulsa un botón del mando,Drücke eine Controller-Taste
+MENU_TOOLTIP_KEYBOARD,Press any key,,Appuyez sur une touche,Pulsa una tecla,Drï¿½cke eine Taste
+MENU_TOOLTIP_CONTROLLER,Press any controller button,,Appuyez sur un bouton de manette,Pulsa un botï¿½n del mando,Drï¿½cke eine Controller-Taste
 MENU_UP,Up,,Haut,Arriba,Oben
 MENU_DOWN,Down,,Bas,Abajo,Unten
 MENU_LEFT,Left,,Gauche,Izquierda,Links
@@ -16,10 +16,10 @@ MENU_RIGHT,Right,,Droite,Derecha,Rechts
 MENU_JUMP,Jump,,Sauter,Saltar,Springen
 MENU_ATTACK,Attack,,Attaquer,Atacar,Angreifen
 MENU_ROLL,Roll,Turlanie,Roulade,Rodar,Rolle
-MENU_SPECIAL,Special,,Spécial,Especial,Spezial
-MENU_MAP,Map,Mapa,Carte,Mapa,Karte
-MENU_PAUSE,Pause,,Pause,Pausa,Pause
-MENU_RESET_DEFAULTS,Reset Defaults,,Réinitialiser,Restablecer,Standardwerte
+MENU_SPECIAL,Special,,Spï¿½cial,Especial,Spezial
+MENU_MAP,,,,,
+MENU_HEAL,Heal,Leczenie,Soigner,Curar,Heilen
+MENU_RESET_DEFAULTS,Reset Defaults,,Rï¿½initialiser,Restablecer,Standardwerte
 MENU_BACK,Back,PowrÃ³t,Retour,AtrÃ¡s,ZurÃ¼ck
 MENU_AUDIO,Audio,DÅ‚wiÅ‚k,Audio,Audio,Audio
 MENU_CONTROLS,Controls,Sterowanie,Comandes,Controles,Steuerung
@@ -37,3 +37,7 @@ MENU_DELETE_SAVE,Delete save file?,Usu? plik zapisu?,Supprimer le fichier de sau
 MENU_CONFIRM,Confirm,Potwierd?,Confirmer,Confirmar,BestÃ¤tigen
 MENU_CANCEL,Cancel,Anuluj,Annuler,Cancelar,Abbrechen
 MENU_EMPTY_SLOT,Empty Slot,Pusty slot,Emplacement vide,Ranura vacÃ­a,Leerer Slot
+MAP_TAB,Map,Mapa,Carte,Mapa,Karte
+INVENTORY_TAB,Inventory,Ekwipunek,Inventaire,Inventario,Inventar
+QUESTS_TAB,Quests,Zadania,QuÃªtes,Misiones,Quests
+SYSTEM_TAB,System,System,SystÃ¨me,Sistema,System
